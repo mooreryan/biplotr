@@ -1,0 +1,19 @@
+Package: biplotr
+Type: Package
+Title: Give me data, and I'll give you a snazzy biplot!
+Version: 0.1.0
+Author: Ryan Moore <moorer@udel.edu> [aut, cre]
+Maintainer: Ryan Moore <moorer@udel.edu>
+Description: A simple little package for creating nice looking PCA biplots.
+    Just input your data matrix and out pops a beautiful biplot for your
+    data analyzing pleasure!
+License: MIT
+URL: https://github.com/mooreryan/biplotr
+BugReports: https://github.com/mooreryan/biplotr/issues
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    ggplot2,
+    grid
+Suggests: 
+    testthat
