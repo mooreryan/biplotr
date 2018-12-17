@@ -1,1 +1,4 @@
-exportPattern("^[[:alpha:]]+")
+# exportPattern("^[[:alpha:]]+")
+export(amelia_theme)
+export(pca_biplot)
+export(hello)

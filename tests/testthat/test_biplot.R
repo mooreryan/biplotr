@@ -1,6 +1,6 @@
 context("Biplot")
 library(ggplot2)
-library(gridExtra)
+library(grid)
 library(biplotr)
 
 test_that("biplot returns a ggplot thing", {
@@ -13,8 +13,7 @@ test_that("biplot returns a ggplot thing", {
   rownames(dat) <- c("apple", "orange", "pear")
   colnames(dat) <- c("price", "amt", "coolness")
 
-  chart <- biplotr::biplot(dat)
-  grid.arrange(chart)
+  chart <- biplotr::pca_biplot(dat)
 
   expect_is(chart, "gg")
 })

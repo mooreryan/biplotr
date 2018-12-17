@@ -43,7 +43,7 @@ get_limits <- function(nudge, ...) {
 }
 
 ###### biplot stuff
-biplot <- function(data,
+pca_biplot <- function(data,
 
                    xaxis_pc = 1,
                    yaxis_pc = 2,

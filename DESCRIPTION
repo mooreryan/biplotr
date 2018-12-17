@@ -16,4 +16,5 @@ Imports:
     ggplot2,
     grid
 Suggests: 
+    gridExtra,
     testthat
