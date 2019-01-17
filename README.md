@@ -43,6 +43,7 @@ Then, make a lovely biplot!  The only required option is `data`, but I'll throw 
 
 ```
 library(ggplot2)
+library(ggrepel)
 library(grid)
 library(gridExtra)
 library(biplotr)

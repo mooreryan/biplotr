@@ -69,12 +69,15 @@ get_limits <- function(nudge, ...) {
 #' @param arrow_label_size Use this param to specify the amount to nudge the arrow label away from the tip of the arrow in the y direction.
 #' @param arrow_legend Put a snazzy legend to the side instead of labeling individual arrows.
 #'
+#' @param use_ggrepel Set this to TRUE if you want to let ggrepel decide where the labels should go.  If you use this option the label nudge options will be ignored.
+#'
 #' @return A gg object ready to save or show on screen.
 #'
 #' @examples
 #' # Here is a single example of making a biplot from the included team_shooting_mat dataset.
 #'
 #' library(ggplot2)
+#' library(ggrepel)
 #' library(grid)
 #' library(gridExtra)
 #' library(biplotr)
@@ -134,7 +137,16 @@ pca_biplot <- function(data,
                    arrow_labels_nudge_y = 0.5,
                    arrow_label_size = 3.5,
 
-                   arrow_legend = FALSE) {
+                   arrow_legend = FALSE,
+
+                   use_ggrepel = FALSE) {
+
+  ## If we're using ggrepel, ignore the nudge for labels.
+  if (use_ggrepel == TRUE) {
+    point_labels_nudge_y = 0
+    arrow_labels_nudge_y = 0
+  }
+
   ## First calculate the PCA using SVD
 
   ## E.g., c("PC1", "PC2", ...)
@@ -268,7 +280,14 @@ pca_biplot <- function(data,
                  show.legend = arrow_legend)
 
   ## Add on labels if we need them.
-  if (point_labels == TRUE) {
+  if (point_labels == TRUE && use_ggrepel == TRUE) {
+    pc_scores_loadings <- pc_scores_loadings +
+      geom_text_repel(aes(x = PC1,
+                    y = PC2,
+                    label=rownames(pc_scores)),
+                vjust = 0.5,
+                size = point_label_size)
+  } else if (point_labels == TRUE) {
     pc_scores_loadings <- pc_scores_loadings +
       geom_text(aes(x = PC1,
                     y = PC2,
@@ -279,7 +298,20 @@ pca_biplot <- function(data,
                 size = point_label_size)
   }
 
-  if (arrow_labels == TRUE) {
+  if (arrow_labels == TRUE && use_ggrepel == TRUE) {
+    pc_scores_loadings <- pc_scores_loadings +
+      geom_text_repel(data = loadings_df,
+                mapping = aes(x = xlabel,
+                              y = ylabel,
+                              label=loadings_df$Variable,
+                              color = Variable),
+                vjust = 0.5,
+                hjust = 0.5,
+
+                ## No legend for the arrow labels
+                show.legend = FALSE,
+                size = arrow_label_size)
+  } else if (arrow_labels == TRUE) {
     pc_scores_loadings <- pc_scores_loadings +
       geom_text(data = loadings_df,
                 mapping = aes(x = xlabel,
