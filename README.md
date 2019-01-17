@@ -80,6 +80,6 @@ grid.arrange(chart)
 # Or save the plot as a pdf
 pdf("snazzy_biplot.pdf", width = 10, height = 10)
 grid.arrange(chart)
-def.off()
+dev.off()
 ```
 

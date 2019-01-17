@@ -42,7 +42,77 @@ get_limits <- function(nudge, ...) {
   c(min(all_points) - nudge, max(all_points) + nudge)
 }
 
-###### biplot stuff
+#' Make the snazziest of biplots!
+#'
+#' \code{pca_biplot} makes a beautiful biplot of your data, automagically!
+#'
+#' TODO:  write a longer description of how I work here!
+#'
+#' @param data A matrix or data.frame of your data.  Rows will be points, columns will be vectors.
+#'
+#' @param xaxis_pc Principal component to map to the x-axis.
+#' @param yaxis_pc Principal component to map to the y-axis.
+#'
+#' @param chart_title Title of the chart.
+#' @param limits_nudge_x Add this value to both ends of the x-axis (can be negative!).  If the original axis would run from -5 to 5, and you use a value of 1 for this parameter, then the axis will be shown running from -6 to 6 instead.  If you use a -2 here, then the axis will run from -3 to 3 instead of -5 to 5.
+#' @param limits_nudge_y Add this value to both ends of the y-axis (can be negative!).  See limits_nudge_x for more info.
+#'
+#' @param center_data This is an important step for PCA!  Just leave it as \code{TRUE} unless you really know what you're doing.
+#' @param scale_data You might want to scale your data if the magnitude of your predictor variables is highly variable, otherwise variables whose magnitude is much larger than the rest of the variables will likely dominate other variables.  On the other hand, this might be what you want.  It's up to you!
+#'
+#' @param point_labels Do you want to label the points?
+#' @param point_label_size How big do you want the labels?
+#' @param point_labels_nudge_y Use this param to specify the amount to nudge the point label away from the point in the y direction.
+#'
+#' @param arrow_labels Do you want to label the arrows?
+#' @param arrow_labels_nudge_y How big do you want labels?
+#' @param arrow_label_size Use this param to specify the amount to nudge the arrow label away from the tip of the arrow in the y direction.
+#' @param arrow_legend Put a snazzy legend to the side instead of labeling individual arrows.
+#'
+#' @return A gg object ready to save or show on screen.
+#'
+#' @examples
+#' # Here is a single example of making a biplot from the included team_shooting_mat dataset.
+#'
+#' library(ggplot2)
+#' library(grid)
+#' library(gridExtra)
+#' library(biplotr)
+#'
+#' # pca_biplot returns a ggplot object
+#' chart <- pca_biplot(
+#'   # The data matrix
+#'   data = team_shooting_mat,
+#'
+#'   # Add a custom title
+#'   chart_title = "NBA Team Shooting 2018",
+#'
+#'   # Increase the x axis limits by 1 in + and - directions
+#'   limits_nudge_x = 1,
+#'
+#'   # Center the data (important for PCA)
+#'   center_data = TRUE,
+#'   # Scale the data (since some of our variables have much higher magnitude than others)
+#'   scale_data = TRUE,
+#'
+#'   # Show point labels
+#'   point_labels = TRUE,
+#'   # Push the labels 0.35 units on the y axis
+#'   point_labels_nudge_y = 0.35,
+#'
+#'   # Show arrow labels
+#'   arrow_labels = TRUE,
+#'   # Push arrow labels away from arrow heads by 0.35 units
+#'   arrow_labels_nudge_y = 0.35
+#' )
+#'
+#' # Draw the plot
+#' grid.arrange(chart)
+#'
+#' # Or save the plot as a pdf
+#' pdf("snazzy_biplot.pdf", width = 10, height = 10)
+#' grid.arrange(chart)
+#' dev.off()
 pca_biplot <- function(data,
 
                    xaxis_pc = 1,
