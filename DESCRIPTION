@@ -1,7 +1,7 @@
 Package: biplotr
 Type: Package
 Title: Give me data, and I'll give you a snazzy biplot!
-Version: 0.0.2
+Version: 0.0.3
 Author: Ryan Moore <moorer@udel.edu> [aut, cre]
 Maintainer: Ryan Moore <moorer@udel.edu>
 Description: A simple little package for creating nice looking PCA biplots.

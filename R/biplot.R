@@ -275,7 +275,7 @@ pca_biplot <- function(data,
                     label=rownames(pc_scores)),
                 vjust = 0.5,
                 nudge_y = point_labels_nudge_y,
-                check_overlap = F,
+                check_overlap = FALSE,
                 size = point_label_size)
   }
 
@@ -289,7 +289,7 @@ pca_biplot <- function(data,
                 vjust = 0.5,
                 hjust = 0.5,
                 ## nudge_y = arrow_labels_nudge_y,
-                check_overlap = T,
+                check_overlap = FALSE,
 
                 ## No legend for the arrow labels
                 show.legend = FALSE,
