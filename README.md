@@ -19,6 +19,23 @@ library(devtools)
 install_github("mooreryan/biplotr")
 ```
 
+## R dependencies
+
+When you use `biplotR`, you'll need to make sure to import the libraries that it depends on at the beginning of your R program.  Something like this:
+
+```R
+library(ggplot2)
+library(grid)
+library(ggrepel)
+library(biplotr)
+```
+
+I use the `gridArrange` function in the example. To use that also add this to the other `library` function calls listed above:
+
+```R
+library(gridExtra)
+```
+
 ## Usage
 
 The main function provided is `pca_biplot`.  It makes PCA biplots with principal component scores and loadings (scaled to fit with the points)!
@@ -33,7 +50,7 @@ team_shooting_mat <- as.matrix(team_shooting_df[, 4:ncol(team_shooting_df)])
 
 We also want to include the team names so our plot looks nice!
 
-```
+```R
 rownames(team_shooting_mat) <- team_shooting_df$Team
 ```
 
@@ -41,7 +58,7 @@ Note that `team_shooting_mat` is also included, but I wanted you to see how to c
 
 Then, make a lovely biplot!  The only required option is `data`, but I'll throw in a couple more to make things look nice.
 
-```
+```R
 library(ggplot2)
 library(ggrepel)
 library(grid)
