@@ -4,29 +4,30 @@
 \alias{pca_biplot}
 \title{Make the snazziest of biplots!}
 \usage{
-pca_biplot(data, xaxis_pc = 1, yaxis_pc = 2, chart_title = FALSE,
-  limits_nudge_x = 0, limits_nudge_y = 0, center_data = TRUE,
-  scale_data = FALSE, point_labels = FALSE, point_label_size = 3.5,
-  point_labels_nudge_y = 0.5, arrow_labels = FALSE,
-  arrow_labels_nudge_y = 0.5, arrow_label_size = 3.5,
-  arrow_legend = FALSE)
+pca_biplot(data, center_data = TRUE, scale_data = FALSE,
+  data_projection = "pc_scores", variable_projection = "loadings",
+  chart_title = FALSE, xaxis_pc = 1, yaxis_pc = 2,
+  limits_nudge_x = 0, limits_nudge_y = 0, point_labels = FALSE,
+  point_label_size = 3.5, point_labels_nudge_y = 0.5,
+  arrow_labels = FALSE, arrow_labels_nudge_y = 0.5,
+  arrow_label_size = 3.5, arrow_legend = FALSE, use_ggrepel = FALSE)
 }
 \arguments{
 \item{data}{A matrix or data.frame of your data.  Rows will be points, columns will be vectors.}
+
+\item{center_data}{This is an important step for PCA!  Just leave it as \code{TRUE} unless you really know what you're doing.}
+
+\item{scale_data}{You might want to scale your data if the magnitude of your predictor variables is highly variable, otherwise variables whose magnitude is much larger than the rest of the variables will likely dominate other variables.  On the other hand, this might be what you want.  It's up to you!}
+
+\item{chart_title}{Title of the chart.}
 
 \item{xaxis_pc}{Principal component to map to the x-axis.}
 
 \item{yaxis_pc}{Principal component to map to the y-axis.}
 
-\item{chart_title}{Title of the chart.}
-
 \item{limits_nudge_x}{Add this value to both ends of the x-axis (can be negative!).  If the original axis would run from -5 to 5, and you use a value of 1 for this parameter, then the axis will be shown running from -6 to 6 instead.  If you use a -2 here, then the axis will run from -3 to 3 instead of -5 to 5.}
 
 \item{limits_nudge_y}{Add this value to both ends of the y-axis (can be negative!).  See limits_nudge_x for more info.}
-
-\item{center_data}{This is an important step for PCA!  Just leave it as \code{TRUE} unless you really know what you're doing.}
-
-\item{scale_data}{You might want to scale your data if the magnitude of your predictor variables is highly variable, otherwise variables whose magnitude is much larger than the rest of the variables will likely dominate other variables.  On the other hand, this might be what you want.  It's up to you!}
 
 \item{point_labels}{Do you want to label the points?}
 
@@ -41,6 +42,8 @@ pca_biplot(data, xaxis_pc = 1, yaxis_pc = 2, chart_title = FALSE,
 \item{arrow_label_size}{Use this param to specify the amount to nudge the arrow label away from the tip of the arrow in the y direction.}
 
 \item{arrow_legend}{Put a snazzy legend to the side instead of labeling individual arrows.}
+
+\item{use_ggrepel}{Set this to TRUE if you want to let ggrepel decide where the labels should go.  If you use this option the label nudge options will be ignored.}
 }
 \value{
 A gg object ready to save or show on screen.
@@ -55,6 +58,7 @@ TODO:  write a longer description of how I work here!
 # Here is a single example of making a biplot from the included team_shooting_mat dataset.
 
 library(ggplot2)
+library(ggrepel)
 library(grid)
 library(gridExtra)
 library(biplotr)
