@@ -33,9 +33,59 @@
 #'
 #' @param use_ggrepel Set this to TRUE if you want to let ggrepel decide where the labels should go.  If you use this option the label nudge options will be ignored.
 #'
-#' @return A gg object ready to save or show on screen.
+#' @return A list with attributes biplot and pca.
 #'
 #' @examples
+#' # Using the famous Iris dataset to show a couple of the biplot combinations you can make.
+#' library(ggplot2)
+#' library(ggrepel)
+#' library(grid)
+#' library(gridExtra)
+#' library(biplotr)
+#'
+#' dat <- iris[, 1:4]
+#'
+#' loadings_scores <- pca_biplot(data = dat,
+#'                               center_data = TRUE,
+#'                               scale_data = FALSE,
+#'                               chart_title = "Iris data",
+#'                               limits_nudge_y = 0,
+#'                               data_projection = "pc_scores",
+#'                               variable_projection = "loadings",
+#'                               arrow_labels = TRUE)
+#'
+#' axes_scores <- pca_biplot(data = dat,
+#'                           center_data = TRUE,
+#'                           scale_data = FALSE,
+#'                           chart_title = "Iris data",
+#'                           limits_nudge_y = 0,
+#'                           data_projection = "pc_scores",
+#'                           variable_projection = "axes",
+#'                           arrow_labels = TRUE)
+#'
+#' loadings_scores_scaled <- pca_biplot(data = dat,
+#'                                      center_data = TRUE,
+#'                                      scale_data = FALSE,
+#'                                      chart_title = "Iris data",
+#'                                      limits_nudge_y = 0,
+#'                                      data_projection = "pc_scores_scaled",
+#'                                      variable_projection = "loadings",
+#'                                      arrow_labels = TRUE)
+#'
+#' axes_scores_scaled <- pca_biplot(data = dat,
+#'                                  center_data = TRUE,
+#'                                  scale_data = FALSE,
+#'                                  chart_title = "Iris data",
+#'                                  limits_nudge_y = 0,
+#'                                  data_projection = "pc_scores_scaled",
+#'                                  variable_projection = "axes",
+#'                                  arrow_labels = TRUE)
+#'
+#' grid.arrange(loadings_scores$biplot, axes_scores$biplot,
+#'              loadings_scores_scaled$biplot, axes_scores_scaled$biplot,
+#'              nrow = 2,
+#'              ncol = 2)
+#'
 #' # Here is a single example of making a biplot from the included team_shooting_mat dataset.
 #'
 #' library(ggplot2)
@@ -72,12 +122,7 @@
 #' )
 #'
 #' # Draw the plot
-#' grid.arrange(chart)
-#'
-#' # Or save the plot as a pdf
-#' pdf("snazzy_biplot.pdf", width = 10, height = 10)
-#' grid.arrange(chart)
-#' dev.off()
+#' grid.arrange(chart$biplot)
 pca_biplot <- function(data,
                        center_data = TRUE,
                        scale_data = FALSE,
@@ -190,7 +235,7 @@ pca_biplot <- function(data,
                   "%)",
                   sep = "")
 
-  pc_scores_loadings <- ggplot2::ggplot(pc_scores_df,
+  biplot_chart <- ggplot2::ggplot(pc_scores_df,
                                         ggplot2::aes(x = pc_scores_df[, xaxis_pc],
                                                      y = pc_scores_df[, yaxis_pc])) +
     amelia_theme() +
@@ -211,14 +256,14 @@ pca_biplot <- function(data,
 
   ## Add on labels if we need them.
   if (point_labels == TRUE && use_ggrepel == TRUE) {
-    pc_scores_loadings <- pc_scores_loadings +
+    biplot_chart <- biplot_chart +
       ggrepel::geom_text_repel(ggplot2::aes(x = PC1,
                                             y = PC2,
                                             label=rownames(decomp[[data_projection]])),
                                vjust = 0.5,
                                size = point_label_size)
   } else if (point_labels == TRUE) {
-    pc_scores_loadings <- pc_scores_loadings +
+    biplot_chart <- biplot_chart +
       ggplot2::geom_text(ggplot2::aes(x = PC1,
                                       y = PC2,
                                       label=rownames(decomp[[data_projection]])),
@@ -229,7 +274,7 @@ pca_biplot <- function(data,
   }
 
   if (arrow_labels == TRUE && use_ggrepel == TRUE) {
-    pc_scores_loadings <- pc_scores_loadings +
+    biplot_chart <- biplot_chart +
       ggrepel::geom_text_repel(data = loadings_df,
                                mapping = ggplot2::aes(x = xlabel,
                                                       y = ylabel,
@@ -242,7 +287,7 @@ pca_biplot <- function(data,
                                show.legend = FALSE,
                                size = arrow_label_size)
   } else if (arrow_labels == TRUE) {
-    pc_scores_loadings <- pc_scores_loadings +
+    biplot_chart <- biplot_chart +
       ggplot2::geom_text(data = loadings_df,
                          mapping = ggplot2::aes(x = xlabel,
                                                 y = ylabel,
@@ -258,6 +303,6 @@ pca_biplot <- function(data,
                          size = arrow_label_size)
   }
 
-  ## Return the plot object
-  pc_scores_loadings
+  list(biplot = biplot_chart,
+       pca = decomp)
 }

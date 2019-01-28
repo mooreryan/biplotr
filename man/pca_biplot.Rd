@@ -50,7 +50,7 @@ pca_biplot(data, center_data = TRUE, scale_data = FALSE,
 \item{use_ggrepel}{Set this to TRUE if you want to let ggrepel decide where the labels should go.  If you use this option the label nudge options will be ignored.}
 }
 \value{
-A gg object ready to save or show on screen.
+A list with attributes biplot and pca.
 }
 \description{
 \code{pca_biplot} makes a beautiful biplot of your data, automagically!
@@ -59,6 +59,56 @@ A gg object ready to save or show on screen.
 TODO:  write a longer description of how I work here!
 }
 \examples{
+# Using the famous Iris dataset to show a couple of the biplot combinations you can make.
+library(ggplot2)
+library(ggrepel)
+library(grid)
+library(gridExtra)
+library(biplotr)
+
+dat <- iris[, 1:4]
+
+loadings_scores <- pca_biplot(data = dat,
+                              center_data = TRUE,
+                              scale_data = FALSE,
+                              chart_title = "Iris data",
+                              limits_nudge_y = 0,
+                              data_projection = "pc_scores",
+                              variable_projection = "loadings",
+                              arrow_labels = TRUE)
+
+axes_scores <- pca_biplot(data = dat,
+                          center_data = TRUE,
+                          scale_data = FALSE,
+                          chart_title = "Iris data",
+                          limits_nudge_y = 0,
+                          data_projection = "pc_scores",
+                          variable_projection = "axes",
+                          arrow_labels = TRUE)
+
+loadings_scores_scaled <- pca_biplot(data = dat,
+                                     center_data = TRUE,
+                                     scale_data = FALSE,
+                                     chart_title = "Iris data",
+                                     limits_nudge_y = 0,
+                                     data_projection = "pc_scores_scaled",
+                                     variable_projection = "loadings",
+                                     arrow_labels = TRUE)
+
+axes_scores_scaled <- pca_biplot(data = dat,
+                                 center_data = TRUE,
+                                 scale_data = FALSE,
+                                 chart_title = "Iris data",
+                                 limits_nudge_y = 0,
+                                 data_projection = "pc_scores_scaled",
+                                 variable_projection = "axes",
+                                 arrow_labels = TRUE)
+
+grid.arrange(loadings_scores$biplot, axes_scores$biplot,
+             loadings_scores_scaled$biplot, axes_scores_scaled$biplot,
+             nrow = 2,
+             ncol = 2)
+
 # Here is a single example of making a biplot from the included team_shooting_mat dataset.
 
 library(ggplot2)
@@ -95,10 +145,5 @@ chart <- pca_biplot(
 )
 
 # Draw the plot
-grid.arrange(chart)
-
-# Or save the plot as a pdf
-pdf("snazzy_biplot.pdf", width = 10, height = 10)
-grid.arrange(chart)
-dev.off()
+grid.arrange(chart$biplot)
 }
