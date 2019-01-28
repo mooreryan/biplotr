@@ -9,6 +9,8 @@
 #' @export
 #'
 #' @param data A matrix or data.frame of your data.  Rows will be points, columns will be vectors.
+#' @param data_projection How do you want to project your data?  Options include "pc_scores" (projections of data into PC space aka principal components) and "pc_scores_scaled" (the same scores, but scaled to unit variance).
+#' @param variable_projection How do you want to project your variables?  Options include "loadings" (the variable loadings) and "axes" (the principal axes).
 #'
 #' @param xaxis_pc Principal component to map to the x-axis.
 #' @param yaxis_pc Principal component to map to the y-axis.
@@ -18,7 +20,7 @@
 #' @param limits_nudge_y Add this value to both ends of the y-axis (can be negative!).  See limits_nudge_x for more info.
 #'
 #' @param center_data This is an important step for PCA!  Just leave it as \code{TRUE} unless you really know what you're doing.
-#' @param scale_data You might want to scale your data if the magnitude of your predictor variables is highly variable, otherwise variables whose magnitude is much larger than the rest of the variables will likely dominate other variables.  On the other hand, this might be what you want.  It's up to you!
+#' @param scale_data You might want to scale your data if the magnitude of your predictor variables is highly variable, otherwise variables whose magnitude is much larger than the rest of the variables will likely dominate other variables.  On the other hand, this might be what you want.  It's up to you! (Note that you can not use scale if one of your variables is constant or zero.)
 #'
 #' @param point_labels Do you want to label the points?
 #' @param point_label_size How big do you want the labels?

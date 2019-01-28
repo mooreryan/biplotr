@@ -17,7 +17,11 @@ pca_biplot(data, center_data = TRUE, scale_data = FALSE,
 
 \item{center_data}{This is an important step for PCA!  Just leave it as \code{TRUE} unless you really know what you're doing.}
 
-\item{scale_data}{You might want to scale your data if the magnitude of your predictor variables is highly variable, otherwise variables whose magnitude is much larger than the rest of the variables will likely dominate other variables.  On the other hand, this might be what you want.  It's up to you!}
+\item{scale_data}{You might want to scale your data if the magnitude of your predictor variables is highly variable, otherwise variables whose magnitude is much larger than the rest of the variables will likely dominate other variables.  On the other hand, this might be what you want.  It's up to you! (Note that you can not use scale if one of your variables is constant or zero.)}
+
+\item{data_projection}{How do you want to project your data?  Options include "pc_scores" (projections of data into PC space aka principal components) and "pc_scores_scaled" (the same scores, but scaled to unit variance).}
+
+\item{variable_projection}{How do you want to project your variables?  Options include "loadings" (the variable loadings) and "axes" (the principal axes).}
 
 \item{chart_title}{Title of the chart.}
 
