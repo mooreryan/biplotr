@@ -15,5 +15,5 @@ test_that("biplot returns a ggplot thing", {
 
   chart <- biplotr::pca_biplot(dat)
 
-  expect_is(chart, "gg")
+  expect_is(chart$biplot, "gg")
 })

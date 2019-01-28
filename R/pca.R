@@ -2,6 +2,7 @@
 #'
 #' @export
 #'
+#' @param data A matrix or data.frame of your data.  Rows will be points, columns will be vectors.
 #' @param center_data This is an important step for PCA!  Just leave it as \code{TRUE} unless you really know what you're doing.
 #' @param scale_data You might want to scale your data if the magnitude of your predictor variables is highly variable, otherwise variables whose magnitude is much larger than the rest of the variables will likely dominate other variables.  On the other hand, this might be what you want.  It's up to you! (Note that you can not use scale if one of your variables is constant or zero.)
 #' @param max_pcs If you have a large matrix that is taking a lot of time, but you only need to keep a couple of PCs, you could set max_pcs to something like 2 (e.g., if you only need to make a biplot) in order to speed up the computation.
