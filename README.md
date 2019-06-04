@@ -38,8 +38,16 @@ library(gridExtra)
 
 ## Usage
 
-For usage examples, check out the built in documentation for the `pca_biplot` function like this:  
+For usage examples, check out the built in documentation for the `pca_biplot` function like this:
 
 ```R
 ?pca_biplot
 ```
+
+## Changes
+
+- `v0.0.6`: Option to draw or not draw arrows and points
+
+## To do list
+
+* Add option to change arrow and point colors

@@ -22,10 +22,12 @@
 #' @param center_data This is an important step for PCA!  Just leave it as \code{TRUE} unless you really know what you're doing.
 #' @param scale_data You might want to scale your data if the magnitude of your predictor variables is highly variable, otherwise variables whose magnitude is much larger than the rest of the variables will likely dominate other variables.  On the other hand, this might be what you want.  It's up to you! (Note that you can not use scale if one of your variables is constant or zero.)
 #'
+#' @param points Do you want to draw the points?
 #' @param point_labels Do you want to label the points?
 #' @param point_label_size How big do you want the labels?
 #' @param point_labels_nudge_y Use this param to specify the amount to nudge the point label away from the point in the y direction.
 #'
+#' @param arrows Do you want to draw the arrows?
 #' @param arrow_labels Do you want to label the arrows?
 #' @param arrow_labels_nudge_y How big do you want labels?
 #' @param arrow_label_size Use this param to specify the amount to nudge the arrow label away from the tip of the arrow in the y direction.
@@ -138,10 +140,12 @@ pca_biplot <- function(data,
                        limits_nudge_x = 0,
                        limits_nudge_y = 0,
 
+                       points = TRUE,
                        point_labels = FALSE,
                        point_label_size = 3.5,
                        point_labels_nudge_y = 0.5,
 
+                       arrows = TRUE,
                        arrow_labels = FALSE,
                        arrow_labels_nudge_y = 0.5,
                        arrow_label_size = 3.5,
@@ -243,16 +247,26 @@ pca_biplot <- function(data,
                          ylim = ylimits) +
     ggplot2::ggtitle(chart_title) +
     ggplot2::xlab(xlabel) +
-    ggplot2::ylab(ylabel) +
-    ggplot2::geom_point() +
-    ggplot2::geom_segment(data = loadings_df,
-                          mapping = ggplot2::aes(x = x,
-                                                 y = y,
-                                                 xend = xend,
-                                                 yend = yend,
-                                                 color = Variable),
-                          arrow = ggplot2::arrow(length = ggplot2::unit(0.25, "cm")),
-                          show.legend = arrow_legend)
+    ggplot2::ylab(ylabel)
+
+  ## Draw points if we need them.
+  if (points == TRUE) {
+    biplot_chart <- biplot_chart +
+      ggplot2::geom_point()
+  }
+
+  ## Draw arrows if we need them.
+  if (arrows == TRUE) {
+    biplot_chart <- biplot_chart +
+      ggplot2::geom_segment(data = loadings_df,
+                            mapping = ggplot2::aes(x = x,
+                                                   y = y,
+                                                   xend = xend,
+                                                   yend = yend,
+                                                   color = Variable),
+                            arrow = ggplot2::arrow(length = ggplot2::unit(0.25, "cm")),
+                            show.legend = arrow_legend)
+  }
 
   ## Add on labels if we need them.
   if (point_labels == TRUE && use_ggrepel == TRUE) {

@@ -7,10 +7,11 @@
 pca_biplot(data, center_data = TRUE, scale_data = FALSE,
   data_projection = "pc_scores", variable_projection = "loadings",
   chart_title = FALSE, xaxis_pc = 1, yaxis_pc = 2,
-  limits_nudge_x = 0, limits_nudge_y = 0, point_labels = FALSE,
-  point_label_size = 3.5, point_labels_nudge_y = 0.5,
-  arrow_labels = FALSE, arrow_labels_nudge_y = 0.5,
-  arrow_label_size = 3.5, arrow_legend = FALSE, use_ggrepel = FALSE)
+  limits_nudge_x = 0, limits_nudge_y = 0, points = TRUE,
+  point_labels = FALSE, point_label_size = 3.5,
+  point_labels_nudge_y = 0.5, arrows = TRUE, arrow_labels = FALSE,
+  arrow_labels_nudge_y = 0.5, arrow_label_size = 3.5,
+  arrow_legend = FALSE, use_ggrepel = FALSE)
 }
 \arguments{
 \item{data}{A matrix or data.frame of your data.  Rows will be points, columns will be vectors.}
@@ -33,11 +34,15 @@ pca_biplot(data, center_data = TRUE, scale_data = FALSE,
 
 \item{limits_nudge_y}{Add this value to both ends of the y-axis (can be negative!).  See limits_nudge_x for more info.}
 
+\item{points}{Do you want to draw the points?}
+
 \item{point_labels}{Do you want to label the points?}
 
 \item{point_label_size}{How big do you want the labels?}
 
 \item{point_labels_nudge_y}{Use this param to specify the amount to nudge the point label away from the point in the y direction.}
+
+\item{arrows}{Do you want to draw the arrows?}
 
 \item{arrow_labels}{Do you want to label the arrows?}
 
