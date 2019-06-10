@@ -46,7 +46,8 @@ For usage examples, check out the built in documentation for the `pca_biplot` fu
 
 ## Changes
 
-- `v0.0.6`: Option to draw or not draw arrows and points
+- `v0.0.7`: Add option for custom arrow scaling factor.
+- `v0.0.6`: Add option to draw or not draw arrows and points
 
 ## To do list
 
