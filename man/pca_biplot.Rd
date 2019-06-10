@@ -11,7 +11,8 @@ pca_biplot(data, center_data = TRUE, scale_data = FALSE,
   point_labels = FALSE, point_label_size = 3.5,
   point_labels_nudge_y = 0.5, arrows = TRUE, arrow_labels = FALSE,
   arrow_labels_nudge_y = 0.5, arrow_label_size = 3.5,
-  arrow_legend = FALSE, use_ggrepel = FALSE)
+  arrow_legend = FALSE, arrow_scaling_factor = 1,
+  use_ggrepel = FALSE)
 }
 \arguments{
 \item{data}{A matrix or data.frame of your data.  Rows will be points, columns will be vectors.}
@@ -51,6 +52,8 @@ pca_biplot(data, center_data = TRUE, scale_data = FALSE,
 \item{arrow_label_size}{Use this param to specify the amount to nudge the arrow label away from the tip of the arrow in the y direction.}
 
 \item{arrow_legend}{Put a snazzy legend to the side instead of labeling individual arrows.}
+
+\item{arrow_scaling_factor}{Arrows are automatically scaled to fit on the chart based on the data projection.  If you want the arrows longer, pass a value > 1 here.  If you want them to be shorter, pass a value > 0 but < 1.  If you want it to decide automatically, leave it as is (or pass 1).}
 
 \item{use_ggrepel}{Set this to TRUE if you want to let ggrepel decide where the labels should go.  If you use this option the label nudge options will be ignored.}
 }

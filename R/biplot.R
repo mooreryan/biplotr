@@ -32,6 +32,7 @@
 #' @param arrow_labels_nudge_y How big do you want labels?
 #' @param arrow_label_size Use this param to specify the amount to nudge the arrow label away from the tip of the arrow in the y direction.
 #' @param arrow_legend Put a snazzy legend to the side instead of labeling individual arrows.
+#' @param arrow_scaling_factor Arrows are automatically scaled to fit on the chart based on the data projection.  If you want the arrows longer, pass a value > 1 here.  If you want them to be shorter, pass a value > 0 but < 1.  If you want it to decide automatically, leave it as is (or pass 1).
 #'
 #' @param use_ggrepel Set this to TRUE if you want to let ggrepel decide where the labels should go.  If you use this option the label nudge options will be ignored.
 #'
@@ -150,6 +151,7 @@ pca_biplot <- function(data,
                        arrow_labels_nudge_y = 0.5,
                        arrow_label_size = 3.5,
                        arrow_legend = FALSE,
+                       arrow_scaling_factor = 1,
 
                        use_ggrepel = FALSE) {
 
@@ -189,7 +191,9 @@ pca_biplot <- function(data,
   ## and down when the arrow is
   ## pointing down_
   nudge_y <- ifelse(yend >= 0, arrow_labels_nudge_y, -arrow_labels_nudge_y)
-  scaling_factor <- get_scaling_factor(unlist(decomp[[data_projection]]), cbind(xend, yend))
+
+  ## We want the arrows scaled so that they are shown nicely with the data projection.
+  scaling_factor <- get_scaling_factor(unlist(decomp[[data_projection]]), cbind(xend, yend)) * arrow_scaling_factor
 
   loadings_df <- data.frame(x = rep(0, times = length(xend)),
                             y = rep(0, times = length(yend)),
