@@ -2,7 +2,7 @@
 
 Give me data, and I'll give you a snazzy biplot!
 
-A simple little package for creating nice looking PCA biplots.  Just input your data matrix and out pops a beautiful biplot for your data analyzing pleasure!
+A simple little package for creating nice looking PCA biplots.  Just input your data matrix/frame and out pops a beautiful biplot for your data analyzing pleasure!
 
 ## Install
 
