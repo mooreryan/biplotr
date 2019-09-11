@@ -4,18 +4,20 @@
 \alias{pca_biplot}
 \title{Make the snazziest of biplots!}
 \usage{
-pca_biplot(data, center_data = TRUE, scale_data = FALSE,
-  data_projection = "pc_scores", variable_projection = "loadings",
-  chart_title = FALSE, xaxis_pc = 1, yaxis_pc = 2,
-  limits_nudge_x = 0, limits_nudge_y = 0, points = TRUE,
-  point_labels = FALSE, point_label_size = 3.5,
-  point_labels_nudge_y = 0.5, arrows = TRUE, arrow_labels = FALSE,
-  arrow_labels_nudge_y = 0.5, arrow_label_size = 3.5,
-  arrow_legend = FALSE, arrow_scaling_factor = 1,
-  use_ggrepel = FALSE)
+pca_biplot(data, data_cols = 1:ncol(data), center_data = TRUE,
+  scale_data = FALSE, data_projection = "pc_scores",
+  variable_projection = "loadings", chart_title = FALSE,
+  xaxis_pc = 1, yaxis_pc = 2, limits_nudge_x = 0,
+  limits_nudge_y = 0, points = TRUE, point_labels = FALSE,
+  point_label_size = 3.5, point_labels_nudge_y = 0.5, arrows = TRUE,
+  arrow_labels = FALSE, arrow_labels_nudge_y = 0.5,
+  arrow_label_size = 3.5, arrow_legend = FALSE,
+  arrow_scaling_factor = 1, use_ggrepel = FALSE)
 }
 \arguments{
 \item{data}{A matrix or data.frame of your data.  Rows will be points, columns will be vectors.}
+
+\item{data_cols}{A vector of columns to treat as data for the PCA.}
 
 \item{center_data}{This is an important step for PCA!  Just leave it as \code{TRUE} unless you really know what you're doing.}
 
@@ -64,7 +66,7 @@ A list with attributes biplot and pca.
 \code{pca_biplot} makes a beautiful biplot of your data, automagically!
 }
 \details{
-TODO:  write a longer description of how I work here!
+The \strong{\code{data_cols}} parameter is used to subset the \code{data.frame} or \code{matrix} passed in to the \code{data} parameter.  So, if you passed in \code{1:4}, then the PCA would be calculated using the first four columns of \code{data}.  If you passed in \code{c(2:4, 6)}, then the PCA would be performed on columns 2, 3, 4, and 6 of \code{data}.
 }
 \examples{
 # Using the famous Iris dataset to show a couple of the biplot combinations you can make.

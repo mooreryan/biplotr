@@ -4,11 +4,12 @@
 #'
 #' \code{pca_biplot} makes a beautiful biplot of your data, automagically!
 #'
-#' TODO:  write a longer description of how I work here!
+#' The \strong{\code{data_cols}} parameter is used to subset the \code{data.frame} or \code{matrix} passed in to the \code{data} parameter.  So, if you passed in \code{1:4}, then the PCA would be calculated using the first four columns of \code{data}.  If you passed in \code{c(2:4, 6)}, then the PCA would be performed on columns 2, 3, 4, and 6 of \code{data}.
 #'
 #' @export
 #'
 #' @param data A matrix or data.frame of your data.  Rows will be points, columns will be vectors.
+#' @param data_cols A vector of columns to treat as data for the PCA.
 #' @param data_projection How do you want to project your data?  Options include "pc_scores" (projections of data into PC space aka principal components) and "pc_scores_scaled" (the same scores, but scaled to unit variance).
 #' @param variable_projection How do you want to project your variables?  Options include "loadings" (the variable loadings) and "axes" (the principal axes).
 #'
@@ -127,6 +128,7 @@
 #' # Draw the plot
 #' grid.arrange(chart$biplot)
 pca_biplot <- function(data,
+                       data_cols = 1:ncol(data),
                        center_data = TRUE,
                        scale_data = FALSE,
 
@@ -175,7 +177,19 @@ pca_biplot <- function(data,
 
   # TODO need to check that the xaxis_pc and yaxis_pc variables are not more than the possible number of PCs
 
-  decomp <- biplotr::pca(data = data,
+  # Keep only the columns specified as data columns for the pca calculation.
+  data_for_pca <- data[, sort(data_cols)]
+
+  # Check that the columns are numeric.
+  all_columns_are_numeric <- sapply(
+    1:ncol(data_for_pca),
+    function(cidx) is.numeric(data_for_pca[, cidx])
+  )
+
+    # Give the user a nicer message if they have non numeric columns left after data subsetting.
+  stopifnot(all_columns_are_numeric)
+
+  decomp <- biplotr::pca(data = data_for_pca,
                          center_data = center_data,
                          scale_data = scale_data,
                          # We don't need to calculate more singular vectors than this.
