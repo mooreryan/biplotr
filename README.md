@@ -48,6 +48,7 @@ For usage examples, check out the built in documentation for the `pca_biplot` fu
 
 ## Changes
 
+- `v0.0.10`: Add plotting elements in the return list.
 - `v0.0.9`: Add options for specifying which columns are data columns and which columns are for coloring points.
 - `v0.0.8`: Not a real update.  Just a version bump for Zenodo.
 - `v0.0.7`: Add option for custom arrow scaling factor.

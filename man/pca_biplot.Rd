@@ -63,7 +63,7 @@ pca_biplot(data, data_cols = 1:ncol(data), center_data = TRUE,
 \item{use_ggrepel}{Set this to TRUE if you want to let ggrepel decide where the labels should go.  If you use this option the label nudge options will be ignored.}
 }
 \value{
-A list with attributes biplot and pca.  (See Details for more info.)
+A list with attributes \code{biplot}, \code{pca}, and \code{plot_elem}.  (See Details for more info.)
 }
 \description{
 \code{pca_biplot} makes a beautiful biplot of your data!
@@ -92,6 +92,8 @@ The \strong{\code{pca}} attribute contains all the PCA data wrapped in a \code{l
   \item \emph{pc_scores_scaled}: matrix with the PC scores scaled to unit variance
   \item \emph{variable_loadings}: matrix with the variable loadings
 }
+
+The \strong{\code{plot_elem}} attribute contains a list with a bunch of things to help the user customize the plot.
 }
 \examples{
 # Import needed libraries.
@@ -141,6 +143,24 @@ print(chart$biplot + geom_point(color = "#aa2288"))
 chart <- pca_biplot(iris, data_cols = 1:4)
 
 plot(chart$pca$pc_scores)
+
+#### This example shows how to use the items in the plot_elem return attr to build up your own
+#### custom plots.
+
+# First do the PCA
+p <- pca_biplot(iris, point_color = "Species")
+
+# This will print the normal biplot.
+print(p$biplot)
+
+# And this is more or less a recreation of the biplot contained in p$biplot using the items
+# in p$plot_elem.
+p$plot_elem$biplot_chart_base +
+  biplotr::theme_amelia() +
+  geom_point(aes(color = Species)) +
+  geom_segment(data = p$plot_elem$loadings_df,
+               mapping = aes(x = x, y = y, xend = xend, yend = yend),
+               arrow = arrow(length = unit(0.25, "cm")))
 
 
 #### This example shows the different types of biplots you can make.

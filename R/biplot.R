@@ -28,6 +28,8 @@
 #'   \item \emph{variable_loadings}: matrix with the variable loadings
 #' }
 #'
+#' The \strong{\code{plot_elem}} attribute contains a list with a bunch of things to help the user customize the plot.
+#'
 #' @export
 #'
 #' @param data A matrix or data.frame of your data.  Rows will be points, columns will be vectors.
@@ -60,7 +62,7 @@
 #'
 #' @param use_ggrepel Set this to TRUE if you want to let ggrepel decide where the labels should go.  If you use this option the label nudge options will be ignored.
 #'
-#' @return A list with attributes biplot and pca.  (See Details for more info.)
+#' @return A list with attributes \code{biplot}, \code{pca}, and \code{plot_elem}.  (See Details for more info.)
 #'
 #' @examples
 #' # Import needed libraries.
@@ -110,6 +112,24 @@
 #' chart <- pca_biplot(iris, data_cols = 1:4)
 #'
 #' plot(chart$pca$pc_scores)
+#'
+#' #### This example shows how to use the items in the plot_elem return attr to build up your own
+#' #### custom plots.
+#'
+#' # First do the PCA
+#' p <- pca_biplot(iris, point_color = "Species")
+#'
+#' # This will print the normal biplot.
+#' print(p$biplot)
+#'
+#' # And this is more or less a recreation of the biplot contained in p$biplot using the items
+#' # in p$plot_elem.
+#' p$plot_elem$biplot_chart_base +
+#'   biplotr::theme_amelia() +
+#'   geom_point(aes(color = Species)) +
+#'   geom_segment(data = p$plot_elem$loadings_df,
+#'                mapping = aes(x = x, y = y, xend = xend, yend = yend),
+#'                arrow = arrow(length = unit(0.25, "cm")))
 #'
 #'
 #' #### This example shows the different types of biplots you can make.
@@ -336,12 +356,17 @@ pca_biplot <- function(data,
   biplot_chart <- ggplot2::ggplot(data = pc_scores_df,
                                   mapping = ggplot2::aes(x = pc_scores_df[, xaxis_pc],
                                                          y = pc_scores_df[, yaxis_pc])) +
-    amelia_theme() +
     ggplot2::coord_fixed(xlim = xlimits,
                          ylim = ylimits) +
     ggplot2::ggtitle(chart_title) +
     ggplot2::xlab(xlabel) +
     ggplot2::ylab(ylabel)
+
+  # Save a copy of the undecorated biplot chart and return it so the user can customize.
+  plot_elem <- list(biplot_chart_base = biplot_chart)
+
+  # Now add the theme
+  biplot_chart <- biplot_chart + theme_amelia()
 
   ## Draw points if we need them.
   if (points == TRUE && is.null(point_color)) {
@@ -411,6 +436,13 @@ pca_biplot <- function(data,
                          size = arrow_label_size)
   }
 
+  plot_elem$loadings_df <- loadings_df
+  plot_elem$xlimits <- xlimits
+  plot_elem$ylimits <- ylimits
+  plot_elem$xlabel <- xlabel
+  plot_elem$ylabel <- ylabel
+
   list(biplot = biplot_chart,
-       pca = decomp)
+       pca = decomp,
+       plot_elem = plot_elem)
 }

@@ -1,6 +1,11 @@
 # Some utility function!
 
-amelia_theme <- function(border_size = 0.5, ...) {
+#' The \code{pca_biplot} ggplot2 theme
+#'
+#' This is the theme used for \code{pca_biplot} charts.
+#'
+#' @export
+theme_amelia <- function(border_size = 0.5, ...) {
   ggplot2::theme_bw() +
     ggplot2::theme(
       ## Remove the box around the chart
