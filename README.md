@@ -1,5 +1,7 @@
 # BiplotR
 
+[![DOI](https://zenodo.org/badge/160990158.svg)](https://zenodo.org/badge/latestdoi/160990158)
+
 Give me data, and I'll give you a snazzy biplot!
 
 A simple little package for creating nice looking PCA biplots.  Just input your data matrix/frame and out pops a beautiful biplot for your data analyzing pleasure!
@@ -46,9 +48,6 @@ For usage examples, check out the built in documentation for the `pca_biplot` fu
 
 ## Changes
 
+- `v0.0.8`: Add options for specifying which columns are data columns and which columns are for coloring points.
 - `v0.0.7`: Add option for custom arrow scaling factor.
-- `v0.0.6`: Add option to draw or not draw arrows and points
-
-## To do list
-
-* Add option to change arrow and point colors
+- `v0.0.6`: Add option to draw or not draw arrows and points.

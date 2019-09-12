@@ -87,3 +87,33 @@ describe("user provides data which isn't all numeric", {
     )
   })
 })
+
+describe("coloring data points by group", {
+  describe("things that raise errors", {
+    it("raises an error if the point_color column name doesn't exist", {
+      expect_error(
+        pca_biplot(iris,
+                   data_cols = 1:4,
+                   point_color = "apple_pie"),
+        regexp = "point_color column was not present in the data"
+      )
+    })
+  })
+})
+
+# Uncomment this section to check on the look of the charts.
+describe("coloring data points by group", {
+  it("makes a biplot colored by a group", {
+    p <- pca_biplot(iris,
+                    arrows = TRUE,
+                    point_color = "Species",
+                    arrow_labels = TRUE,
+                    arrow_labels_nudge_y = 0.3,
+                    limits_nudge_x = 1,
+                    limits_nudge_y = -1)
+
+    pdf("haha.pdf")
+    print(p$biplot)
+    dev.off()
+  })
+})

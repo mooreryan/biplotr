@@ -8,11 +8,12 @@ pca_biplot(data, data_cols = 1:ncol(data), center_data = TRUE,
   scale_data = FALSE, data_projection = "pc_scores",
   variable_projection = "loadings", chart_title = FALSE,
   xaxis_pc = 1, yaxis_pc = 2, limits_nudge_x = 0,
-  limits_nudge_y = 0, points = TRUE, point_labels = FALSE,
-  point_label_size = 3.5, point_labels_nudge_y = 0.5, arrows = TRUE,
-  arrow_labels = FALSE, arrow_labels_nudge_y = 0.5,
-  arrow_label_size = 3.5, arrow_legend = FALSE,
-  arrow_scaling_factor = 1, use_ggrepel = FALSE)
+  limits_nudge_y = 0, points = TRUE, point_color = NULL,
+  point_labels = FALSE, point_label_size = 3.5,
+  point_labels_nudge_y = 0.5, arrows = TRUE, arrow_labels = FALSE,
+  arrow_labels_nudge_y = 0.5, arrow_label_size = 3.5,
+  arrow_legend = FALSE, arrow_scaling_factor = 1,
+  use_ggrepel = FALSE)
 }
 \arguments{
 \item{data}{A matrix or data.frame of your data.  Rows will be points, columns will be vectors.}
@@ -21,7 +22,7 @@ pca_biplot(data, data_cols = 1:ncol(data), center_data = TRUE,
 
 \item{center_data}{This is an important step for PCA!  Just leave it as \code{TRUE} unless you really know what you're doing.}
 
-\item{scale_data}{You might want to scale your data if the magnitude of your predictor variables is highly variable, otherwise variables whose magnitude is much larger than the rest of the variables will likely dominate other variables.  On the other hand, this might be what you want.  It's up to you! (Note that you can not use scale if one of your variables is constant or zero.)}
+\item{scale_data}{Do you want to scale the data before doing PCA?}
 
 \item{data_projection}{How do you want to project your data?  Options include "pc_scores" (projections of data into PC space aka principal components) and "pc_scores_scaled" (the same scores, but scaled to unit variance).}
 
@@ -38,6 +39,8 @@ pca_biplot(data, data_cols = 1:ncol(data), center_data = TRUE,
 \item{limits_nudge_y}{Add this value to both ends of the y-axis (can be negative!).  See limits_nudge_x for more info.}
 
 \item{points}{Do you want to draw the points?}
+
+\item{point_color}{Column name (as a string) to color the points by.}
 
 \item{point_labels}{Do you want to label the points?}
 
@@ -60,72 +63,124 @@ pca_biplot(data, data_cols = 1:ncol(data), center_data = TRUE,
 \item{use_ggrepel}{Set this to TRUE if you want to let ggrepel decide where the labels should go.  If you use this option the label nudge options will be ignored.}
 }
 \value{
-A list with attributes biplot and pca.
+A list with attributes biplot and pca.  (See Details for more info.)
 }
 \description{
-\code{pca_biplot} makes a beautiful biplot of your data, automagically!
+\code{pca_biplot} makes a beautiful biplot of your data!
 }
 \details{
 The \strong{\code{data_cols}} parameter is used to subset the \code{data.frame} or \code{matrix} passed in to the \code{data} parameter.  So, if you passed in \code{1:4}, then the PCA would be calculated using the first four columns of \code{data}.  If you passed in \code{c(2:4, 6)}, then the PCA would be performed on columns 2, 3, 4, and 6 of \code{data}.
+
+The \strong{\code{scale_data}} parameter is used to scale the data before running PCA.  You might want to scale your data if the magnitude of your predictor variables is highly variable, otherwise variables whose magnitude is much larger than the rest of the variables will likely dominate other variables.  On the other hand, this might be what you want.  It's up to you! (Note that you can not use scale if one of your variables is constant or zero.)
+
+The \strong{\code{point_color}} option is used to color the points by some column of the \code{data}.  It is similar to the \code{color} parameter of the \code{aes} function in \code{ggplot}, except that it must be provided as a string/character rather than a Symbol.  E.g., if you want to color the points by the \code{Species} column, use \code{point_color = "Species"} rather than \code{point_color = Species}.  If \strong{\code{point_color}} is also present in the columns specified by \code{data_cols}, it will be removed from the \code{data_cols}.
+
+The \strong{\code{use_ggrepel}} parameter is used to enable \code{ggrepel} to decide where the labels should be automatically.  This works really well for the points (unless there are a lot of them in which case it is SLOW), but not as well for the arrows.  It technically treats the tip of the arrow as the point to avoid, so it will often collide with the line part of the arrow.
+
+The \strong{return value} is a \code{list} with attributes \code{biplot} and \code{pca}.
+
+The \strong{\code{biplot}} attribute contains the ggplot object.  It's just like anyother ggplot object, so, depending on how you originally called the \code{pca_biplot} function, you could customize it more to your liking (see examples).
+
+The \strong{\code{pca}} attribute contains all the PCA data wrapped in a \code{list}.  This contains all you need to make whichever kind of biplots you like or to create your own custom biplot chart.  It's attributes are:
+\itemize{
+  \item \emph{svals}: singular values
+  \item \emph{lsvecs}: left singular vectors
+  \item \emph{rsvec}: right singular vectors
+  \item \emph{pc_variance}: variance explained by the included PCs
+  \item \emph{cum_var}: cumulative variance explained
+  \item \emph{pc_scores}: matrix with the PC scores
+  \item \emph{pc_scores_scaled}: matrix with the PC scores scaled to unit variance
+  \item \emph{variable_loadings}: matrix with the variable loadings
+}
 }
 \examples{
-# Using the famous Iris dataset to show a couple of the biplot combinations you can make.
+# Import needed libraries.
 library(ggplot2)
 library(ggrepel)
 library(grid)
 library(gridExtra)
 library(biplotr)
 
-dat <- iris[, 1:4]
+#### Here is a simple example of making a biplot using the iris dataset included in R.
 
-loadings_scores <- pca_biplot(data = dat,
-                              center_data = TRUE,
-                              scale_data = FALSE,
-                              chart_title = "Iris data",
-                              limits_nudge_y = 0,
+chart <- pca_biplot(iris,
+                    # Show the arrows
+                    arrows = TRUE,
+
+                    # Print the arrow labels
+                    arrow_labels = TRUE,
+
+                    # Sometimes the arrow labels are too close or too far from the arrow tips.
+                    # This moves the arrow labels out from the tips by 0.3 units in up or
+                    # down in the y-axis direction.
+                    arrow_labels_nudge_y = 0.3,
+
+                    # Color the points by the Species column.
+                    point_color = "Species",
+
+                    # Increase the x-axis limits a bit so the arrow labels don't get cut off.
+                    limits_nudge_x = 1,
+
+                    # Decrease the y-axis limits a bit as by default, it makes a square chart,
+                    # but this data is not too spread out in the y-axis.
+                    limits_nudge_y = -1)
+
+# Show the plot!
+print(chart$biplot)
+
+#### Here is an example showing that the biplot attr of the return list is just
+#### an ordinary ggplot object.
+
+chart <- pca_biplot(iris, data_cols = 1:4, points = FALSE, arrows = FALSE)
+
+# Print a chart with purple points.
+print(chart$biplot + geom_point(color = "#aa2288"))
+
+#### This example shows that you could use the pca attr of the return list to make your own plot.
+
+chart <- pca_biplot(iris, data_cols = 1:4)
+
+plot(chart$pca$pc_scores)
+
+
+#### This example shows the different types of biplots you can make.
+
+loadings_scores <- pca_biplot(data = iris,
+                              # Color points by "Species" column.
+                              point_color = "Species",
+                              arrow_labels = TRUE,
                               data_projection = "pc_scores",
-                              variable_projection = "loadings",
-                              arrow_labels = TRUE)
+                              variable_projection = "loadings")
 
-axes_scores <- pca_biplot(data = dat,
-                          center_data = TRUE,
-                          scale_data = FALSE,
-                          chart_title = "Iris data",
-                          limits_nudge_y = 0,
+axes_scores <- pca_biplot(data = iris,
+                          # Color points by "Species" column.
+                          point_color = "Species",
+                          arrow_labels = TRUE,
                           data_projection = "pc_scores",
-                          variable_projection = "axes",
-                          arrow_labels = TRUE)
+                          variable_projection = "axes")
 
-loadings_scores_scaled <- pca_biplot(data = dat,
-                                     center_data = TRUE,
-                                     scale_data = FALSE,
-                                     chart_title = "Iris data",
-                                     limits_nudge_y = 0,
+loadings_scores_scaled <- pca_biplot(data = iris,
+                                     # Color points by "Species" column.
+                                     point_color = "Species",
+                                     arrow_labels = TRUE,
                                      data_projection = "pc_scores_scaled",
-                                     variable_projection = "loadings",
-                                     arrow_labels = TRUE)
+                                     variable_projection = "loadings")
 
-axes_scores_scaled <- pca_biplot(data = dat,
-                                 center_data = TRUE,
-                                 scale_data = FALSE,
-                                 chart_title = "Iris data",
-                                 limits_nudge_y = 0,
+axes_scores_scaled <- pca_biplot(data = iris,
+                                 # Color points by "Species" column.
+                                 point_color = "Species",
+                                 arrow_labels = TRUE,
                                  data_projection = "pc_scores_scaled",
-                                 variable_projection = "axes",
-                                 arrow_labels = TRUE)
+                                 variable_projection = "axes")
 
+# Note that the ggplot object is in the $biplot attribute.
 grid.arrange(loadings_scores$biplot, axes_scores$biplot,
              loadings_scores_scaled$biplot, axes_scores_scaled$biplot,
              nrow = 2,
              ncol = 2)
 
-# Here is a single example of making a biplot from the included team_shooting_mat dataset.
-
-library(ggplot2)
-library(ggrepel)
-library(grid)
-library(gridExtra)
-library(biplotr)
+#### Here is an example of making a biplot from the included team_shooting_mat dataset.
+#### It includes examples for customizing the look of the chart.
 
 # pca_biplot returns a ggplot object
 chart <- pca_biplot(
