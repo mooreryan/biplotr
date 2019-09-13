@@ -82,8 +82,7 @@ describe("user provides data which isn't all numeric", {
   it("raises an error and gives a decent message", {
     expect_error(
       pca_biplot(iris),
-      regexp = "all_columns_are_numeric are not all TRUE",
-      fixed = TRUE
+      regexp = "All columns used for PCA are not numeric"
     )
   })
 })
@@ -97,6 +96,54 @@ describe("coloring data points by group", {
                    point_color = "apple_pie"),
         regexp = "point_color column was not present in the data"
       )
+    })
+
+    describe("when the data has more covarites than the point_color", {
+      it("raises an error unless the data_cols is set properly", {
+        # This has Species and apple as covariates.
+        iris2 <- cbind(iris, apple = c(rep("a", nrow(iris) / 2), rep("b", nrow(iris) / 2)))
+
+        expect_error(
+          # Species was set as point color, but by default it will try and use every column other than point_color as PCA data.
+          pca_biplot(iris2, point_color = "Species"),
+          regexp = "All columns used for PCA are not numeric"
+        )
+      })
+
+      it("does NOT raise an error if the extra covarite column is numeric", {
+        # This case would be a user error and will give the wrong answer but will not cause an error.
+        # In this case, apple is meant to be a covariate and not included in the PCA, but since it is numeric and the default value for data_cols is 1:ncol(data) it IS included in the PCA.
+        iris2 <- cbind(iris, apple = 1:nrow(iris))
+
+        expect_error(
+          pca_biplot(iris2, point_color = "Species"),
+          NA
+        )
+      })
+    })
+  })
+})
+
+describe("the plot elements that are returned", {
+  describe("data_for_ggplot", {
+    it("has the PCs and the covarites", {
+      p <- pca_biplot(iris, point_color = "Species")
+
+      expected_colnames <- c("PC1", "PC2", "PC3", "Species")
+      actual_colnames <- colnames(p$plot_elem$data_for_ggplot)
+
+      expect_equal(actual_colnames, expected_colnames)
+    })
+
+    it("returns all the covariates, not just the point_color column", {
+      iris2 <- cbind(iris, apple = c(rep("a", nrow(iris) / 2), rep("b", nrow(iris) / 2)))
+
+      p <- pca_biplot(iris2, data_cols = 1:4, point_color = "Species")
+
+      expected_colnames <- c("PC1", "PC2", "PC3", "Species", "apple")
+      actual_colnames <- colnames(p$plot_elem$data_for_ggplot)
+
+      expect_equal(actual_colnames, expected_colnames)
     })
   })
 })

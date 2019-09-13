@@ -1,0 +1,91 @@
+---
+title: "Specifying Data Columns"
+author: "Ryan M. Moore"
+date: "2019-09-13"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{using-biplotr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Import needed libraries.
+
+```{r setup}
+library(ggplot2)
+library(biplotr)
+```
+
+# Specifying data columns
+
+If you pass a `data.frame` to `pca_biplot` that has additional variables (e.g., factors with covariate info) that are not meant to be used in the PCA calculation, you must be sure to specify the `data_cols` parameter properly.
+
+Let's use a modified version of the `iris` dataset to see what I mean.
+
+```{r}
+iris2 <- cbind(
+  iris, 
+  Group = c(
+    rep(1, times = nrow(iris) / 2),
+    rep(2, times = nrow(iris) / 2)
+  )
+)
+
+print(str(iris2))
+```
+
+This data, `iris2` contains an additional column, `Group`, that groups the data into two groups, `1` and `2`.  However, as you can see, it is a `numeric` column.
+
+```{r}
+class(iris2$Group)
+```
+
+If we are not careful, the `Group` variable will be included in the PCA calculation even though for our data, it is a covariate that isn't meant to be included.
+
+```{r}
+p <- biplotr::pca_biplot(data = iris2, 
+                         point_color = "Species", 
+                         arrow_labels = TRUE,
+                         limits_nudge_x = 1,
+                         limits_nudge_y = -1)
+plot(p$biplot)
+```
+
+As you can see, there is an extra variable in the biplot labeled `Group`.  This is because by default, `pca_biplot` treats every column other than the one specified by `point_color` as input to the PCA.  Since there are more covariates than just the one we specify in `point_color`, we need to manually specify the `data_cols` parameter like this:
+
+```{r}
+p <- biplotr::pca_biplot(data = iris2, 
+                         data_cols = 1:4,
+                         point_color = "Species", 
+                         arrow_labels = TRUE,
+                         limits_nudge_x = 1,
+                         limits_nudge_y = -1)
+plot(p$biplot)
+```
+
+What happens if we don't specify `data_cols` but had specified `Group` as a factor instead of numeric?  
+
+```{r eval=FALSE, include=TRUE}
+iris2$Group <- as.factor(iris2$Group)
+
+p <- biplotr::pca_biplot(data = iris2, 
+                         point_color = "Species", 
+                         arrow_labels = TRUE,
+                         limits_nudge_x = 1,
+                         limits_nudge_y = -1)
+```
+
+In this case, an error occurs with a message somthing like this:
+
+```
+ Error in biplotr::pca_biplot(data = iris2, point_color = "Species", arrow_labels = TRUE, : All columns used for PCA are not numeric! Make sure to select only numeric columns for PCA! (cols included in PCA were: '1, 2, 3, 4, 6')
+```
+
+alerting you that the PCA was attempted on columns 1-4 and 6, which is not what we wanted.

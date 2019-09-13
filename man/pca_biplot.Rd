@@ -144,6 +144,19 @@ chart <- pca_biplot(iris, data_cols = 1:4)
 
 plot(chart$pca$pc_scores)
 
+#### This example shows that you must specify data_cols if your input data has lots of extra
+#### variables not meant to be in the PCA. (See the Vignettes for more info.)
+
+iris2 <- cbind(
+  iris,
+  Group = c(
+    rep(1, times = nrow(iris) / 2),
+    rep(2, times = nrow(iris) / 2)
+  )
+)
+
+chart <- pca_biplot(iris2, data_cols = 1:4, point_color = "Species")
+
 #### This example shows how to use the items in the plot_elem return attr to build up your own
 #### custom plots.
 

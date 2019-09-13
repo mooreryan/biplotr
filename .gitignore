@@ -11,3 +11,6 @@ R/apple.R
 R/biplot3d.txt
 R/lala.txt
 tests/testthat/haha*.pdf
+inst/doc
+doc
+Meta

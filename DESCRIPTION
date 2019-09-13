@@ -1,7 +1,7 @@
 Package: biplotr
 Type: Package
 Title: Give me data, and I'll give you a snazzy biplot!
-Version: 0.0.10
+Version: 0.0.11
 Author: Ryan Moore <moorer@udel.edu> [aut, cre]
 Maintainer: Ryan Moore <moorer@udel.edu>
 Description: A simple little package for creating nice looking PCA biplots.
@@ -19,5 +19,8 @@ Imports:
     grid
 Suggests: 
     gridExtra,
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 RoxygenNote: 6.1.1
+VignetteBuilder: knitr

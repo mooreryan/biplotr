@@ -1,5 +1,10 @@
 # TODO use ggrepel only when actually writing labels.
 
+# Helpers
+
+"%nin%" <- Negate("%in%")
+
+
 #' Make the snazziest of biplots!
 #'
 #' \code{pca_biplot} makes a beautiful biplot of your data!
@@ -112,6 +117,19 @@
 #' chart <- pca_biplot(iris, data_cols = 1:4)
 #'
 #' plot(chart$pca$pc_scores)
+#'
+#' #### This example shows that you must specify data_cols if your input data has lots of extra
+#' #### variables not meant to be in the PCA. (See the Vignettes for more info.)
+#'
+#' iris2 <- cbind(
+#'   iris,
+#'   Group = c(
+#'     rep(1, times = nrow(iris) / 2),
+#'     rep(2, times = nrow(iris) / 2)
+#'   )
+#' )
+#'
+#' chart <- pca_biplot(iris2, data_cols = 1:4, point_color = "Species")
 #'
 #' #### This example shows how to use the items in the plot_elem return attr to build up your own
 #' #### custom plots.
@@ -255,8 +273,7 @@ pca_biplot <- function(data,
 
 
   if (is.null(point_color)) {
-    # Keep only the columns specified as data columns for the pca calculation.
-    data_for_pca <- data[, sort(data_cols)]
+    keep_these_cols <- sort(data_cols)
   } else {
     # First things first, check and make sure that column actually exists.
     if (point_color %nin% colnames(data)) {
@@ -267,10 +284,9 @@ pca_biplot <- function(data,
     grouping_col_idx <- which(colnames(data) == point_color)
 
     # Then get the columns to keep.
-    keep_these_cols <- setdiff(data_cols, grouping_col_idx)
-
-    data_for_pca <- data[, sort(keep_these_cols)]
+    keep_these_cols <- sort(setdiff(data_cols, grouping_col_idx))
   }
+  data_for_pca <- data[, keep_these_cols]
 
   # Check that the columns are numeric.
   all_columns_are_numeric <- sapply(
@@ -279,13 +295,19 @@ pca_biplot <- function(data,
   )
 
     # Give the user a nicer message if they have non numeric columns left after data subsetting.
-  stopifnot(all_columns_are_numeric)
+  if (!all(all_columns_are_numeric)) {
+    stop(paste0(
+      "All columns used for PCA are not numeric!  Make sure to select only numeric columns for PCA! (cols included in PCA were: '",
+                paste(keep_these_cols, collapse = ", "),
+                "')"
+      ))
+  }
 
   decomp <- biplotr::pca(data = data_for_pca,
                          center_data = center_data,
                          scale_data = scale_data,
-                         # We don't need to calculate more singular vectors than this.
-                         max_pcs = max(xaxis_pc, yaxis_pc))
+                         # We don't need to calculate more singular vectors than this.  Always include at least 3 PCs for easy 3d biplots down the line.
+                         max_pcs = max(xaxis_pc, yaxis_pc, 3))
 
 
   ## For the biplots
@@ -335,9 +357,11 @@ pca_biplot <- function(data,
 
   pc_scores_df <- as.data.frame(decomp[[data_projection]])
 
-  if (!is.null(point_color)) {
-    pc_scores_df[[point_color]] <- data[[point_color]]
-  }
+  # Merge the original data with the pc_scores_df so it is easier to color by lots of different things.
+
+  # if (!is.null(point_color)) {
+  #   pc_scores_df[[point_color]] <- data[[point_color]]
+  # }
 
   # We want the labels to include the amount of variance explained by the desired PC.
   xlabel <- paste("PC",
@@ -353,7 +377,17 @@ pca_biplot <- function(data,
                   "%)",
                   sep = "")
 
-  biplot_chart <- ggplot2::ggplot(data = pc_scores_df,
+  # First make a df for the "covariates" (or whatever is in there).  This is all the data not included in the PCA.  We wrap it in a data.frame in case there is only one covariate column.
+  covariate_df <- as.data.frame(data[, -keep_these_cols])
+
+  # Then add in the proper column names.
+  colnames(covariate_df) <- colnames(data)[-keep_these_cols]
+
+  data_for_ggplot <- cbind(pc_scores_df, covariate_df)
+
+  plot_elem <- list(data_for_ggplot = data_for_ggplot)
+
+  biplot_chart <- ggplot2::ggplot(data = data_for_ggplot,
                                   mapping = ggplot2::aes(x = pc_scores_df[, xaxis_pc],
                                                          y = pc_scores_df[, yaxis_pc])) +
     ggplot2::coord_fixed(xlim = xlimits,
@@ -363,7 +397,7 @@ pca_biplot <- function(data,
     ggplot2::ylab(ylabel)
 
   # Save a copy of the undecorated biplot chart and return it so the user can customize.
-  plot_elem <- list(biplot_chart_base = biplot_chart)
+  plot_elem$biplot_chart_base <- biplot_chart
 
   # Now add the theme
   biplot_chart <- biplot_chart + theme_amelia()
@@ -446,3 +480,4 @@ pca_biplot <- function(data,
        pca = decomp,
        plot_elem = plot_elem)
 }
+
