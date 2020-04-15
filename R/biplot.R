@@ -291,7 +291,8 @@ pca_biplot <- function(data,
   # Check that the columns are numeric.
   all_columns_are_numeric <- sapply(
     1:ncol(data_for_pca),
-    function(cidx) is.numeric(data_for_pca[, cidx])
+    # Need to unlist here in case input data is a tibble.
+    function(cidx) is.numeric(unlist(data_for_pca[, cidx]))
   )
 
     # Give the user a nicer message if they have non numeric columns left after data subsetting.
@@ -480,4 +481,3 @@ pca_biplot <- function(data,
        pca = decomp,
        plot_elem = plot_elem)
 }
-
