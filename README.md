@@ -46,8 +46,13 @@ For usage examples, check out the built in documentation for the `pca_biplot` fu
 ?pca_biplot
 ```
 
+### Using tibbles as input
+
+Technically `pca_biplot` takes `data.frames` or `matrices` but not `tibbles`.  A `tibble` will work, but it won't print out point labels correctly.
+
 ## Changes
 
+- `v0.0.12`: Handle some tibble input
 - `v0.0.10`: Add plotting elements in the return list.
 - `v0.0.9`: Add options for specifying which columns are data columns and which columns are for coloring points.
 - `v0.0.8`: Not a real update.  Just a version bump for Zenodo.
