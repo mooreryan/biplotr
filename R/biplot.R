@@ -409,7 +409,7 @@ pca_biplot <- function(data,
       ggplot2::geom_point()
   } else if (points == TRUE) {
     biplot_chart <- biplot_chart +
-      ggplot2::geom_point(aes(color = !!sym(point_color)))
+      ggplot2::geom_point(ggplot2::aes(color = !!rlang::sym(point_color)))
   }
 
   ## Draw arrows if we need them.
@@ -448,7 +448,7 @@ pca_biplot <- function(data,
       ggrepel::geom_text_repel(data = loadings_df,
                                mapping = ggplot2::aes(x = xlabel,
                                                       y = ylabel,
-                                                      label = loadings_df$Variable),
+                                                      label = Variable),
                                vjust = 0.5,
                                hjust = 0.5,
 
@@ -460,7 +460,7 @@ pca_biplot <- function(data,
       ggplot2::geom_text(data = loadings_df,
                          mapping = ggplot2::aes(x = xlabel,
                                                 y = ylabel,
-                                                label = loadings_df$Variable),
+                                                label = Variable),
                          vjust = 0.5,
                          hjust = 0.5,
                          ## nudge_y = arrow_labels_nudge_y,
